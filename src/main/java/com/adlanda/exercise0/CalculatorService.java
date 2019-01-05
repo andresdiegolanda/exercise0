@@ -21,20 +21,28 @@ public class CalculatorService {
 	 */
 	public long calculate(Map<String, Long> fruitCounter, Map<String, Fruit> fruits) {
 		int result = 0;
-		for (Map.Entry<String, Long> entry : fruitCounter.entrySet()) {
-			String fruitName = entry.getKey();
-			Long fruitQuantity = entry.getValue();
-			if (fruits.get(fruitName) != null) {
-				if (fruitName.equalsIgnoreCase("apple")) {
-					fruitQuantity = fruitQuantity / 2 + fruitQuantity % 2;
-				} else if (fruitName.equalsIgnoreCase("orange")) {
-					fruitQuantity = fruitQuantity / 3 * 2 + fruitQuantity % 3;
-				}
-				result += fruits.get(fruitName).getPrice() * fruitQuantity;
-			} else {
-				throw new RuntimeException("No value found for fruit:" + fruitName);
-			}
+		long totalApples = 0;
+		long freeApples = 0;
+		long totalBananas = 0;
+		long freeBananas = 0;
+		long totalOranges = 0;
+
+		if (fruitCounter.get(Constants.APPLE) != null) {
+			totalApples = fruitCounter.get(Constants.APPLE);
+			freeApples = totalApples / 2;
 		}
+		if (fruitCounter.get(Constants.BANANA) != null) {
+			totalBananas = fruitCounter.get(Constants.BANANA);
+			freeBananas = (totalApples % 2 + totalBananas) / 2;
+		}
+		result += (totalApples - freeApples) * fruits.get(Constants.APPLE).getPrice();
+		result += (totalBananas - freeBananas) * fruits.get(Constants.BANANA).getPrice();
+
+		if (fruitCounter.get(Constants.ORANGE) != null) {
+			totalOranges = fruitCounter.get(Constants.ORANGE);
+		}
+		result += (totalOranges / 3 * 2 + totalOranges % 3) * fruits.get(Constants.ORANGE).getPrice();
+
 		return result;
 	}
 

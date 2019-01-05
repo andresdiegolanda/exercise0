@@ -18,11 +18,13 @@ public class DAO {
 	private static Map<String, Fruit> fruits;
 	// static initializer. Could be replaced by database reads on a real solution
 	static {
-		Fruit apple = new Fruit("apple", 60);
-		Fruit orange = new Fruit("orange", 25);
+		Fruit apple = new Fruit(Constants.APPLE, 60);
+		Fruit orange = new Fruit(Constants.ORANGE, 25);
+		Fruit banana = new Fruit(Constants.BANANA, 20);
 		fruits = new HashMap<String, Fruit>();
-		fruits.put("apple", apple);
-		fruits.put("orange", orange);
+		fruits.put(Constants.APPLE, apple);
+		fruits.put(Constants.ORANGE, orange);
+		fruits.put(Constants.BANANA, banana);
 	}
 
 	public Map<String, Fruit> getFruits() {

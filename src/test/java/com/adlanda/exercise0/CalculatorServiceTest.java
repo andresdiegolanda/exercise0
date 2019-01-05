@@ -11,18 +11,20 @@ public class CalculatorServiceTest {
 
 	private static Map<String, Fruit> fruits;
 	static {
-		Fruit apple = new Fruit("apple", 60);
-		Fruit orange = new Fruit("orange", 25);
+		Fruit apple = new Fruit(Constants.APPLE, 60);
+		Fruit orange = new Fruit(Constants.ORANGE, 25);
+		Fruit banana = new Fruit(Constants.BANANA, 20);
 		fruits = new HashMap<String, Fruit>();
-		fruits.put("apple", apple);
-		fruits.put("orange", orange);
+		fruits.put(Constants.APPLE, apple);
+		fruits.put(Constants.ORANGE, orange);
+		fruits.put(Constants.BANANA, banana);
 	}
 
 	@Test
 	public void shouldReturnResultOk() {
 		Map<String, Long> fruitCounter = new HashMap<String, Long>();
-		fruitCounter.put("apple", 3L); // should pay two
-		fruitCounter.put("orange", 4L); // should pay three
+		fruitCounter.put(Constants.APPLE, 3L); // should pay two
+		fruitCounter.put(Constants.ORANGE, 4L); // should pay three
 		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
 		assertTrue(result == 195);
 	}
@@ -30,18 +32,22 @@ public class CalculatorServiceTest {
 	@Test
 	public void shouldReturnResultOk2() {
 		Map<String, Long> fruitCounter = new HashMap<String, Long>();
-		fruitCounter.put("apple", 2L); // shoule pay one
-		fruitCounter.put("orange", 3L);// shoule pay two
+		fruitCounter.put(Constants.APPLE, 3L); // should pay two
+		fruitCounter.put(Constants.ORANGE, 4L); // should pay three
+		fruitCounter.put(Constants.BANANA, 1L); // should pay zero
 		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
-		assertTrue(result == 110);
+		assertTrue(result == 195);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void shouldThrowRuntimeException() {
+
+	@Test
+	public void shouldReturnResultOk3() {
 		Map<String, Long> fruitCounter = new HashMap<String, Long>();
-		fruitCounter.put("apple", 3L);
-		fruitCounter.put("peanut", 1L);
-		CalculatorService.getInstance().calculate(fruitCounter, fruits);
+		fruitCounter.put(Constants.APPLE, 3L); // should pay two
+		fruitCounter.put(Constants.ORANGE, 3L);// should pay two
+		fruitCounter.put(Constants.BANANA, 2L); // should pay one
+		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
+		assertTrue(result == 190);
 	}
 
 }
