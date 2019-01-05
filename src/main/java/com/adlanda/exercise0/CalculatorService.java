@@ -26,6 +26,7 @@ public class CalculatorService {
 		long totalBananas = 0;
 		long freeBananas = 0;
 		long totalOranges = 0;
+		long totalMelons = 0;
 
 		if (fruitCounter.get(Constants.APPLE) != null) {
 			totalApples = fruitCounter.get(Constants.APPLE);
@@ -42,6 +43,11 @@ public class CalculatorService {
 			totalOranges = fruitCounter.get(Constants.ORANGE);
 		}
 		result += (totalOranges / 3 * 2 + totalOranges % 3) * fruits.get(Constants.ORANGE).getPrice();
+
+		if (fruitCounter.get(Constants.MELON) != null) {
+			totalMelons = fruitCounter.get(Constants.MELON);
+		}
+		result += (totalMelons / 3 * 2 + totalMelons % 3) * fruits.get(Constants.MELON).getPrice();
 
 		return result;
 	}

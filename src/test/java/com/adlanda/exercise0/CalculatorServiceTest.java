@@ -14,10 +14,12 @@ public class CalculatorServiceTest {
 		Fruit apple = new Fruit(Constants.APPLE, 60);
 		Fruit orange = new Fruit(Constants.ORANGE, 25);
 		Fruit banana = new Fruit(Constants.BANANA, 20);
+		Fruit melon = new Fruit(Constants.MELON, 100);
 		fruits = new HashMap<String, Fruit>();
 		fruits.put(Constants.APPLE, apple);
 		fruits.put(Constants.ORANGE, orange);
 		fruits.put(Constants.BANANA, banana);
+		fruits.put(Constants.MELON, melon);
 	}
 
 	@Test
@@ -48,6 +50,17 @@ public class CalculatorServiceTest {
 		fruitCounter.put(Constants.BANANA, 2L); // should pay one
 		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
 		assertTrue(result == 190);
+	}
+
+	@Test
+	public void shouldReturnResultOk4() {
+		Map<String, Long> fruitCounter = new HashMap<String, Long>();
+		fruitCounter.put(Constants.APPLE, 3L); // should pay two
+		fruitCounter.put(Constants.ORANGE, 3L);// should pay two
+		fruitCounter.put(Constants.BANANA, 2L); // should pay one
+		fruitCounter.put(Constants.MELON, 3L); // should pay two
+		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
+		assertTrue(result == 390);
 	}
 
 }
