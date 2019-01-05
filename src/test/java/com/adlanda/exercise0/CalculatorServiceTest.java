@@ -21,10 +21,19 @@ public class CalculatorServiceTest {
 	@Test
 	public void shouldReturnResultOk() {
 		Map<String, Long> fruitCounter = new HashMap<String, Long>();
-		fruitCounter.put("apple", 3L);
-		fruitCounter.put("orange", 1L);
+		fruitCounter.put("apple", 3L); // should pay two
+		fruitCounter.put("orange", 4L); // should pay three
 		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
-		assertTrue(result == 205);
+		assertTrue(result == 195);
+	}
+
+	@Test
+	public void shouldReturnResultOk2() {
+		Map<String, Long> fruitCounter = new HashMap<String, Long>();
+		fruitCounter.put("apple", 2L); // shoule pay one
+		fruitCounter.put("orange", 3L);// shoule pay two
+		long result = CalculatorService.getInstance().calculate(fruitCounter, fruits);
+		assertTrue(result == 110);
 	}
 
 	@Test(expected = RuntimeException.class)

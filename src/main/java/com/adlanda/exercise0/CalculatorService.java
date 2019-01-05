@@ -25,6 +25,11 @@ public class CalculatorService {
 			String fruitName = entry.getKey();
 			Long fruitQuantity = entry.getValue();
 			if (fruits.get(fruitName) != null) {
+				if (fruitName.equalsIgnoreCase("apple")) {
+					fruitQuantity = fruitQuantity / 2 + fruitQuantity % 2;
+				} else if (fruitName.equalsIgnoreCase("orange")) {
+					fruitQuantity = fruitQuantity / 3 * 2 + fruitQuantity % 3;
+				}
 				result += fruits.get(fruitName).getPrice() * fruitQuantity;
 			} else {
 				throw new RuntimeException("No value found for fruit:" + fruitName);
