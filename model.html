@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Model</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            max-width: 80vw;
+            max-height: 40vh;
+        }
+    </style>
+</head>
+<body>
+    <h2>Transaction Success vs Failure Over Time</h2>
+    <div>
+        <label>Time Intervals: <input type="number" id="timeIntervals" value="24"></label>
+        <label>Starting Interval: <input type="number" id="startInterval" value="1"></label>
+        <label>Transactions Growth per Interval: <input type="number" id="growthRate" value="5"></label>
+        <label>Failure Rate (%): <input type="number" step="0.01" id="failRate" value="5"></label>
+        <button onclick="runModel()">Generate Plot</button>
+    </div>
+    <canvas id="transactionChart"></canvas>
+    <canvas id="costChart"></canvas>
+    
+    <script>
+        class TransactionModel {
+            constructor(timeIntervals, startInterval, growthRate, failRate) {
+                this.timeIntervals = Math.max(1, timeIntervals);
+                this.startInterval = Math.max(1, startInterval);
+                this.growthRate = Math.max(0, growthRate);
+                this.failRate = Math.min(Math.max(0, failRate / 100), 1); // Convert percentage to decimal
+                this.data = [];
+            }
+
+            generateData() {
+                this.data = [];
+                let totalFailed = 0;
+                
+                for (let i = 1; i <= this.timeIntervals; i++) {
+                    let transactionsAttempted = (i >= this.startInterval) ? (i - this.startInterval + 1) * this.growthRate : 0;
+                    let transactionsFailed = Math.round(transactionsAttempted * this.failRate);
+                    let transactionsSuccessful = transactionsAttempted - transactionsFailed;
+                    
+                    totalFailed += transactionsFailed;
+                    let rollbackCost = transactionsAttempted; // Fix: Set rollback cost to match attempted transactions
+                    let nonRollbackCost = totalFailed / (1 - this.failRate);
+                    
+                    this.data.push({
+                        time: i,
+                        attempted: transactionsAttempted,
+                        successful: transactionsSuccessful,
+                        failed: transactionsFailed,
+                        rollbackCost: rollbackCost,
+                        nonRollbackCost: nonRollbackCost
+                    });
+                }
+            }
+
+            plotData() {
+                const ctx1 = document.getElementById("transactionChart").getContext("2d");
+                if (window.transactionChart instanceof Chart) {
+                    window.transactionChart.destroy(); // Properly clear previous chart
+                }
+                window.transactionChart = new Chart(ctx1, {
+                    type: "line",
+                    data: {
+                        labels: this.data.map(d => d.time),
+                        datasets: [
+                            {
+                                label: "Total Transactions",
+                                data: this.data.map(d => d.attempted),
+                                borderColor: "blue",
+                                fill: false
+                            },
+                            {
+                                label: "Successful Transactions",
+                                data: this.data.map(d => d.successful),
+                                borderColor: "green",
+                                fill: false
+                            },
+                            {
+                                label: "Failed Transactions",
+                                data: this.data.map(d => d.failed),
+                                borderColor: "red",
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { title: { display: true, text: "Time Interval" } },
+                            y: { title: { display: true, text: "Transactions" }, beginAtZero: true }
+                        }
+                    }
+                });
+
+                const ctx2 = document.getElementById("costChart").getContext("2d");
+                if (window.costChart instanceof Chart) {
+                    window.costChart.destroy(); // Properly clear previous chart
+                }
+                window.costChart = new Chart(ctx2, {
+                    type: "line",
+                    data: {
+                        labels: this.data.map(d => d.time),
+                        datasets: [
+                            {
+                                label: "Rollback Cost",
+                                data: this.data.map(d => d.rollbackCost),
+                                borderColor: "blue",
+                                fill: false
+                            },
+                            {
+                                label: "No Rollback Cost",
+                                data: this.data.map(d => d.nonRollbackCost),
+                                borderColor: "orange",
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { title: { display: true, text: "Time Interval" } },
+                            y: { title: { display: true, text: "Cost" }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+        }
+
+        function runModel() {
+            const timeIntervals = parseInt(document.getElementById("timeIntervals").value) || 1;
+            const startInterval = parseInt(document.getElementById("startInterval").value) || 1;
+            const growthRate = parseInt(document.getElementById("growthRate").value) || 0;
+            const failRate = parseFloat(document.getElementById("failRate").value) || 0;
+            
+            const model = new TransactionModel(timeIntervals, startInterval, growthRate, failRate);
+            model.generateData();
+            model.plotData();
+        }
+    </script>
+</body>
+</html>
